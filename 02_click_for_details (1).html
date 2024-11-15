@@ -1,0 +1,256 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Display a popup on click</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; height:100%}
+</style>
+</head>
+<body>
+
+<style>
+    .mapboxgl-popup {
+        max-width: 400px;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    }
+    #popup{
+        width:50%;
+        position: absolute; top: 0; bottom: 0;        
+        left:50%;
+        z-index:1;
+        border:1px solid black;
+    }
+    #map{
+        z-index:-1;
+        position: absolute; top: 0; bottom: 0;        
+width:50%;
+    }
+</style>
+<div id="map"></div>
+<div id="popup"></div>
+<script>
+
+    /*TODO:
+    The steps outlined here are annotated within the code below, read through and make edits
+
+    Set up
+    You have already makd 2 map styles, an incarcerated footprint centroids map, and a satellite basemap in mapbox.
+    1. Add your access token, and the 2 map style URLs to this file.
+    2. set the center and zoom of the maps - these do not have to match as in previous map. 
+   
+    Work on the click interactions: 
+    3. create a map popup and fill map popups with text.
+    4. reset center and zoom for satellite map whenever first map is clicked
+    
+    Finish and publish
+    5. Add any finishing touches such as buttons or a legend. 
+    6. Push this map to the same repo you preiously published so that it apears online publically.
+    7. Submit this URL to courseworks as well.
+    */
+	mapboxgl.accessToken = 'pk.eyJ1IjoiYmVuZWRldHRhdm9ucGFsb21iaW5pIiwiYSI6ImNtMm1nMHdtZDBsdDIycXB6NWtxamhoNXkifQ.4pEewaQtCAvrWv7uDDIGPQ';//put your access token within quotes
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/benedettavonpalombini/cm3hvbg6c00f401rvgows7ylj',//set the dot map URL here
+        center: [37.160,-80.520],//set map center coorinates inside square brackets as an array, in [lng,lat] format
+        zoom: 4.70//set zoom so whole country can be viewed easily
+    });
+
+    const satMap = new mapboxgl.Map({
+        container: 'popup',
+        style: 'mapbox://styles/benedettavonpalombini/cm3hv0dcy00ck01ry6ds9fx4x',//set your satelite map style URL here
+        center: [41.853,-87.619],//set map center coorinates inside square brackets as an array, in [lng,lat] format
+        //for this map center, pick a place maybe with a compelling satelite image of a prison to start.
+        zoom: 16.50//set zoom so that it is showing a closeup
+    });
+
+
+    map.on('load', () => {
+   
+        //line of code starting with console. below prints out the layers in your current map
+        //try uncommenting by removing the double // and see what prints out in your javascript console.
+
+        console.log(map.getStyle().layers)
+
+        //NOTE: on chrome - get to your javascript console by going to View > Developer > Javascript Console
+
+
+        // The code below detects a click on the prison_population layer of your map style.
+        // You need to check that in your map style the layer the name matches what is in the code
+        map.on('click', 'geocoded-datacenter-dj3f4f', (e) => {//change 'prison_boundaries' to your layer name
+            
+            // this is the feature that was clicked on below
+            const clickedOnFeature = e.features[0]
+            
+            //using keys to access feature object
+            //for example: the lat and long of the feature is here below
+            const coordinates = clickedOnFeature.geometry.coordinates.slice();
+
+            //console.log out properties to see what is available as popup text.
+            //uncomment below to see all the properties printed out on the console
+            console.log(e.features[0].properties)
+            //to access the different values inside properties, use the corresponding keys
+            //for example:
+            var address = e.features[0].properties.ADDRESS
+            var city =  e.features[0].properties.CITY
+            var capacity = e.features[0].properties.CAPACITY
+            // string together the values by concatenating/adding them
+            // add line breaks with '<br>'(from slides last week)
+            var popupText = address +' '+city +'<br>'+"capacity: "+capacity
+
+            //set the center of the satMap using .setCenter(coordinates to center on)            
+            satMap.setCenter(coordinates)
+            satMap.setZoom(16)//pick a zoom for best view of all prison footprintss
+
+            
+            //dont' worry about these 3 lines of comments and 3 lines of code below for now
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            //populate the popup
+            //try your map out on the local server
+            //when you click you should see a pop up with some of the things I have already added to the variable popupText
+            //replace this text with more information about the prison
+            new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(popupText)//here is where the variable with the strings I added goes
+                //you can set the html to a new variable of your own making
+                //or you can change the popupText variable by + more words and values
+                .addTo(map);
+        });
+
+
+        //the lines below are built in to style the pointer, 
+        // change the layer name prison_boundaries to match the layer name in your style
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'geocoded-datacenter-dj3f4f', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'geocoded-datacenter-dj3f4f', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    });
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mapbox and Maplibre Integration</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; height: 100%; }
+.mapboxgl-popup {
+    max-width: 400px;
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+#map, #maplibre {
+    position: absolute; top: 0; bottom: 0; width: 50%;
+}
+#map { left: 0; }
+#maplibre { right: 0; }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="maplibre"></div>
+
+<script>
+    // Initialize Mapbox Map
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYmVuZWRldHRhdm9ucGFsb21iaW5pIiwiYSI6ImNtMm1nMHdtZDBsdDIycXB6NWtxamhoNXkifQ.4pEewaQtCAvrWv7uDDIGPQ';
+    const mapboxMap = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/benedettavonpalombini/cm3hvbg6c00f401rvgows7ylj',
+        center: [37.160, -80.520],
+        zoom: 4.7
+    });
+
+    // Add click interaction to Mapbox Map
+    mapboxMap.on('load', () => {
+        console.log(mapboxMap.getStyle().layers);
+
+        mapboxMap.on('click', 'geocoded-datacenter-dj3f4f', (e) => {
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const popupText = `
+                <strong>Address:</strong> ${e.features[0].properties.ADDRESS}<br>
+                <strong>City:</strong> ${e.features[0].properties.CITY}<br>
+                <strong>Capacity:</strong> ${e.features[0].properties.CAPACITY}
+            `;
+            new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(popupText)
+                .addTo(mapboxMap);
+        });
+
+        mapboxMap.on('mouseenter', 'geocoded-datacenter-dj3f4f', () => {
+            mapboxMap.getCanvas().style.cursor = 'pointer';
+        });
+
+        mapboxMap.on('mouseleave', 'geocoded-datacenter-dj3f4f', () => {
+            mapboxMap.getCanvas().style.cursor = '';
+        });
+    });
+
+    // Initialize Maplibre Map for 3D Terrain
+    const maplibreMap = new maplibregl.Map({
+        container: 'maplibre',
+        zoom: 12,
+        center: [11.39085, 47.27574],
+        pitch: 70,
+        style: {
+            version: 8,
+            sources: {
+                osm: {
+                    type: 'raster',
+                    tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    tileSize: 256,
+                    attribution: '&copy; OpenStreetMap Contributors',
+                    maxzoom: 19
+                },
+                terrainSource: {
+                    type: 'raster-dem',
+                    url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
+                    tileSize: 256
+                },
+                hillshadeSource: {
+                    type: 'raster-dem',
+                    url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
+                    tileSize: 256
+                }
+            },
+            layers: [
+                { id: 'osm', type: 'raster', source: 'osm' },
+                {
+                    id: 'hills',
+                    type: 'hillshade',
+                    source: 'hillshadeSource',
+                    paint: { 'hillshade-shadow-color': '#473B24' }
+                }
+            ],
+            terrain: { source: 'terrainSource', exaggeration: 1 }
+        }
+    });
+
+    maplibreMap.addControl(new maplibregl.NavigationControl());
+    maplibreMap.addControl(new maplibregl.TerrainControl({ source: 'terrainSource', exaggeration: 1 }));
+</script>
+
+</body>
+</html>
