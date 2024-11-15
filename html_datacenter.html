@@ -1,0 +1,205 @@
+
+<!-- <html>
+<head>
+    <meta charset="utf-8">
+    <title>Display a popup on click</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; display: flex; height: 100%; overflow: hidden; }
+        #map, #popup { width: 50%; height: 100%; }
+        #popup { border-left: 1px solid black; }
+        .mapboxgl-popup { max-width: 400px; font: 12px/20px 'Helvetica Neue', Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="popup"></div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYmVuZWRldHRhdm9ucGFsb21iaW5pIiwiYSI6ImNtMm1nMHdtZDBsdDIycXB6NWtxamhoNXkifQ.4pEewaQtCAvrWv7uDDIGPQ';
+
+        // Initialize the main map with all layers
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/benedettavonpalombini/cm3hvbg6c00f401rvgows7ylj',
+            center: [-86.902, 37.885],
+            zoom: 4.09
+        });
+
+        // Initialize the satellite map
+        const satMap = new mapboxgl.Map({
+            container: 'popup',
+            style: 'mapbox://styles/benedettavonpalombini/cm3hv0dcy00ck01ry6ds9fx4x',
+            center: [-87.619,41.853],
+            zoom: 16.5
+        });
+
+        map.on('load', () => {
+            console.log(map.getStyle().layers); // Debug: List all layers in console
+
+            // Array of layer IDs that you want to make interactive
+            const interactiveLayers = [
+                'geocoded-datacenter-dj3f4f', 
+                'rail1840-8ff7fy', 
+                '1870-b4bgz6', 
+                '1855-d6cx4d', 
+                '1861-0yogk2', 
+                'rail1845-7jipy7'
+            ];
+
+            // Set up click interaction for each interactive layer
+            interactiveLayers.forEach(layer => {
+                map.on('click', layer, (e) => {
+                    const coordinates = e.features[0].geometry.coordinates.slice();
+                    const properties = e.features[0].properties;
+
+                    // Customize popup content based on available properties
+                    let popupText = `Layer: ${layer}<br>`;
+                    for (const [key, value] of Object.entries(properties)) {
+                        popupText += `${key}: ${value}<br>`;
+                    }
+
+                    // Update satellite map to center on clicked feature
+                    satMap.setCenter(coordinates);
+                    satMap.setZoom(16);
+
+                    // Ensure the popup appears over the clicked point
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+
+                    // Display popup
+                    new mapboxgl.Popup()
+                        .setLngLat(coordinates)
+                        .setHTML(popupText)
+                        .addTo(map);
+                });
+
+                // Change cursor to pointer when hovering over the interactive layer
+                map.on('mouseenter', layer, () => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                // Reset cursor when leaving the interactive layer
+                map.on('mouseleave', layer, () => {
+                    map.getCanvas().style.cursor = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html> -->
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Display a popup on click</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; display: flex; height: 100%; width: 100%;overflow: hidden; }
+        #map, #popup { width: 100%; height: 100%; }
+        #popup { border-left: 1px solid black; }
+        .mapboxgl-popup { max-width: 400px; font: 12px/20px 'Helvetica Neue', Arial, sans-serif; }
+
+        /* Title Styling */
+        #title {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            text-align: left;
+            font-size: 17px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: light;
+            color: #ffffff;
+            padding: 10px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <!-- Title -->
+    <div id="title">infrastructure of the cloud</div>
+
+    <!-- Map Divs -->
+    <div id="map"></div>
+    <div id="popup"></div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYmVuZWRldHRhdm9ucGFsb21iaW5pIiwiYSI6ImNtMm1nMHdtZDBsdDIycXB6NWtxamhoNXkifQ.4pEewaQtCAvrWv7uDDIGPQ';
+
+        // Initialize the main map with all layers
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/benedettavonpalombini/cm3hvbg6c00f401rvgows7ylj',
+            center: [-86.902, 37.885],
+            zoom: 4.09
+        });
+
+        // Initialize the satellite map
+        const satMap = new mapboxgl.Map({
+            container: 'popup',
+            style: 'mapbox://styles/benedettavonpalombini/cm3hv0dcy00ck01ry6ds9fx4x',
+            center: [-87.619,41.853],
+            zoom: 16.5
+        });
+
+        map.on('load', () => {
+            console.log(map.getStyle().layers); // Debug: List all layers in console
+
+            // Array of layer IDs that you want to make interactive
+            const interactiveLayers = [
+                'geocoded-datacenter-dj3f4f', 
+                'rail1840-8ff7fy', 
+                '1870-b4bgz6', 
+                '1855-d6cx4d', 
+                '1861-0yogk2', 
+                'rail1845-7jipy7'
+            ];
+
+            // Set up click interaction for each interactive layer
+            interactiveLayers.forEach(layer => {
+                map.on('click', layer, (e) => {
+                    const coordinates = e.features[0].geometry.coordinates.slice();
+                    const properties = e.features[0].properties;
+
+                    // Customize popup content based on available properties
+                    let popupText = `Layer: ${layer}<br>`;
+                    for (const [key, value] of Object.entries(properties)) {
+                        popupText += `${key}: ${value}<br>`;
+                    }
+
+                    // Update satellite map to center on clicked feature
+                    satMap.setCenter(coordinates);
+                    satMap.setZoom(16);
+
+                    // Ensure the popup appears over the clicked point
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+
+                    // Display popup
+                    new mapboxgl.Popup()
+                        .setLngLat(coordinates)
+                        .setHTML(popupText)
+                        .addTo(map);
+                });
+
+                // Change cursor to pointer when hovering over the interactive layer
+                map.on('mouseenter', layer, () => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                // Reset cursor when leaving the interactive layer
+                map.on('mouseleave', layer, () => {
+                    map.getCanvas().style.cursor = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
